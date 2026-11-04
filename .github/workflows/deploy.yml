@@ -1,0 +1,70 @@
+# رفع الموقع تلقائياً للاستضافة عبر FTP (InfinityFree أو Hostinger أو أي استضافة PHP)
+# يحتاج Secrets في الريبو: FTP_SERVER, FTP_USERNAME, FTP_PASSWORD, SETUP_KEY
+# اختياري: FTP_DIR (افتراضي /htdocs/ لـ InfinityFree؛ لـ Hostinger: /public_html/)
+name: Deploy (FTP)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check secrets
+        id: check
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          SETUP_KEY: ${{ secrets.SETUP_KEY }}
+        run: |
+          if [ -z "$FTP_SERVER" ]; then
+            echo "::notice::FTP secrets not set yet – skipping deploy."
+            echo "go=false" >> "$GITHUB_OUTPUT"
+          elif [ ${#SETUP_KEY} -lt 12 ]; then
+            echo "::error::SETUP_KEY secret is missing or shorter than 12 characters."
+            exit 1
+          else
+            echo "go=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.check.outputs.go == 'true'
+
+      - name: Syntax check
+        if: steps.check.outputs.go == 'true'
+        run: tests/check.sh
+
+      - name: Build upload folder
+        if: steps.check.outputs.go == 'true'
+        env:
+          SETUP_KEY: ${{ secrets.SETUP_KEY }}
+        run: |
+          mkdir -p build
+          cp -r index.html my.html admin api css js img data build/
+          rm -f build/data/*.sqlite* build/img/preview-*.png
+          php -r '
+            $f = "build/api/config.php";
+            $s = file_get_contents($f);
+            $k = getenv("SETUP_KEY");
+            $s = str_replace("\x27CHANGE-ME-before-upload\x27", var_export($k, true), $s, $n);
+            if ($n !== 1) { fwrite(STDERR, "setup_key placeholder not found\n"); exit(1); }
+            file_put_contents($f, $s);
+          '
+          php -l build/api/config.php
+
+      - name: Upload via FTP
+        if: steps.check.outputs.go == 'true'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./build/
+          server-dir: ${{ secrets.FTP_DIR || '/htdocs/' }}
+          exclude: |
+            **/data/*.sqlite*

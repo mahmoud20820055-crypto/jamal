@@ -34,6 +34,10 @@
   يتفعّل تلقائياً على `*.github.io` أو مع `?demo=1` (`SITE.demo` في `js/config.js`). سيرفر حقيقي = لا يتفعّل.
   كلمة سر لوحة المدير بالعرض: `demo1234`. أي action جديد بالـ API لازم ينضاف كمان بـ `demo.js`.
 - رابط المعاينة للزبون: https://mahmoud20820055-crypto.github.io/jamal/ (GitHub Pages من `main` / root).
+- **النشر على سيرفر حقيقي:** `.github/workflows/deploy.yml` يرفع عبر FTP عند كل push على `main` (يتخطى بهدوء إذا الـ Secrets مش موجودة).
+  Secrets: `FTP_SERVER`, `FTP_USERNAME`, `FTP_PASSWORD`, `SETUP_KEY` (+ `FTP_DIR` اختياري، افتراضي `/htdocs/`).
+  الـ workflow يحقن `SETUP_KEY` بـ `api/config.php` وقت البناء فقط – **الريبو عام، لا تكتب المفتاح الحقيقي فيه.**
+  دليل خطوة بخطوة: `docs/deploy-free.md`. فحص السيرفر: `/api/health.php`.
 
 ## تشغيل محلي
 ```bash
