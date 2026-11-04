@@ -30,6 +30,10 @@
 - أول دخول للمدير يتطلب `setup_key` من `api/config.php` (ويُرفض إذا بقي على القيمة الافتراضية).
 - إذا فشل الـ API، نموذج التواصل يعرض رابط واتساب بديل.
 - RTL: الرسائل "الخاصة بي" على اليمين (`align-self: flex-start`).
+- **وضع العرض (Demo):** `js/demo.js` يحاكي `api/visitor.php` و`api/admin.php` داخل المتصفح (localStorage + 3 طلبات تجريبية).
+  يتفعّل تلقائياً على `*.github.io` أو مع `?demo=1` (`SITE.demo` في `js/config.js`). سيرفر حقيقي = لا يتفعّل.
+  كلمة سر لوحة المدير بالعرض: `demo1234`. أي action جديد بالـ API لازم ينضاف كمان بـ `demo.js`.
+- رابط المعاينة للزبون: https://mahmoud20820055-crypto.github.io/jamal/ (GitHub Pages من `main` / root).
 
 ## تشغيل محلي
 ```bash

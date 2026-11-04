@@ -22,7 +22,7 @@
   var ERR = {
     bad_password: "סיסמה שגויה.", bad_setup_key: "מפתח ההגדרה שגוי (או שלא שונה בקובץ config.php).",
     weak_password: "הסיסמה צריכה להכיל לפחות 8 תווים.", rate_limited: "יותר מדי ניסיונות. נסו שוב בעוד כמה דקות.",
-    csrf: "פג תוקף ההתחברות. רעננו את העמוד.", server: "שגיאת שרת. בדקו שהקבצים הועלו לשרת עם PHP."
+    csrf: "פג תוקף ההתחברות. רעננו את העמוד.", demo_readonly: "בגרסת ההדגמה אי אפשר לשנות סיסמה.", server: "שגיאת שרת. בדקו שהקבצים הועלו לשרת עם PHP."
   };
   function errText(e) { return ERR[e && e.code] || "אירעה שגיאה (" + ((e && e.code) || "?") + ")"; }
 
@@ -42,7 +42,7 @@
     $("#authTitle").textContent = setup ? "הגדרה ראשונית" : "כניסה ללוח הניהול";
     $("#authHint").textContent = setup
       ? "בחרו סיסמה למנהל. מפתח ההגדרה נמצא בקובץ api/config.php (setup_key)."
-      : "הזינו את סיסמת המנהל.";
+      : (S.demo ? "גרסת הדגמה – הסיסמה: demo1234" : "הזינו את סיסמת המנהל.");
     $("#authBtn").textContent = setup ? "יצירת סיסמה וכניסה" : "כניסה";
     $("#authForm").password.autocomplete = setup ? "new-password" : "current-password";
     setTimeout(function () { (setup ? $("#authForm").setup_key : $("#authForm").password).focus(); }, 0);

@@ -281,6 +281,14 @@ p { margin: 0 0 1em; }
   .wa-float { left: 16px; bottom: 22px; width: 56px; height: 56px; }
 }
 
+/* ---------- Demo ribbon (preview link only) ---------- */
+.demo-ribbon {
+  position: fixed; top: 0; left: 50%; transform: translateX(-50%); z-index: 300;
+  background: #e11d48; color: #fff; font-size: .78rem; font-weight: 700; padding: 3px 14px 4px; border-radius: 0 0 10px 10px;
+  white-space: nowrap; box-shadow: 0 4px 12px rgba(0, 0, 0, .15);
+}
+.demo-ribbon a { color: #fff; }
+
 /* ---------- Responsive ---------- */
 @media (max-width: 980px) {
   .hero__inner, .about, .contact { grid-template-columns: 1fr; }
