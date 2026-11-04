@@ -38,6 +38,8 @@
   Secrets: `FTP_SERVER`, `FTP_USERNAME`, `FTP_PASSWORD`, `SETUP_KEY` (+ `FTP_DIR` اختياري، افتراضي `/htdocs/`).
   الـ workflow يحقن `SETUP_KEY` بـ `api/config.php` وقت البناء فقط – **الريبو عام، لا تكتب المفتاح الحقيقي فيه.**
   دليل خطوة بخطوة: `docs/deploy-free.md`. فحص السيرفر: `/api/health.php`.
+- **السيرفر الحالي (معاينة مجانية):** InfinityFree، حساب `if0_43354886`، الدومين **http://hakol-lehakol.kesug.com** (المجلد `/htdocs/`).
+  الـ Secrets مضافة؛ أي push على `main` بينرفع تلقائياً.
 
 ## تشغيل محلي
 ```bash
