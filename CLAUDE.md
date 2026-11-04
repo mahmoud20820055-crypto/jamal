@@ -37,6 +37,32 @@ php -S 127.0.0.1:8099        # من جذر الريبو، ثم افتح http://1
 tests/run-e2e.sh /tmp/shots  # اختبار كامل + صور
 ```
 
+## دليل التعديل السريع (لـ Claude)
+**بعد أي تعديل:** شغّل `tests/check.sh`. ولو التعديل يمس الشات أو اللوحة أو الـ API شغّل `tests/run-e2e.sh /tmp/shots` وافحص الصور.
+(يحتاج php مع pdo_sqlite + node + playwright. إذا playwright ناقص: `npm i -g playwright && npx playwright install chromium`.)
+
+| المطلوب | وين |
+|---|---|
+| تغيير رقم الواتساب | `js/config.js` (`whatsapp`, `phoneDisplay`, `phoneTel`) **و** `api/config.php` (`whatsapp`) – لازم يتطابقوا |
+| الإيميل / العنوان / ساعات العمل / الشعار النصي | `js/config.js` (`email`, `address`, `hours`, `tagline`) |
+| إضافة/تعديل صنف أو أصناف فرعية | `js/config.js` ← `categories` (`id` فريد، `title`, `icon`, `desc`, `sub[]`). بينعرض تلقائياً بالشبكة والفوتر وقائمة النموذج والهيرو (أول 9) |
+| أيقونة جديدة لصنف | `js/main.js` ← كائن `ICONS` (مسارات SVG بـ stroke، viewBox 24) |
+| نص الرد التلقائي الافتراضي | `api/config.php` ← `auto_reply` (بعد التشغيل يُعدّل من لوحة المدير ← הגדרות، والقيمة المحفوظة بالقاعدة بتتغلب) |
+| الردود السريعة للمدير | `admin/admin.js` ← مصفوفة `QUICK` |
+| نصوص الأقسام (הירו، למה אנחנו، אודות) | `index.html` مباشرة |
+| الألوان والخطوط | `css/style.css` ← متغيرات `:root` (`--navy`, `--accent`…). الخط Heebo |
+| إشعار إيميل للمدير | `api/config.php` ← `notify_email` |
+| حقل جديد بالنموذج | `index.html` + `js/main.js` (كائن `d`) + `api/visitor.php` (`start`) + `api/lib.php` (عمود جديد؛ لقاعدة قائمة أضف `ALTER TABLE` آمن) |
+
+**قواعد:**
+- كل نص للزوار بالعبري الصحيح، `dir="rtl"`. استعمل خصائص منطقية (`inset-inline`, `margin-inline-start`).
+- أي نص من المستخدم يُعرض عبر `esc()` أو `textContent` فقط – ممنوع `innerHTML` مع بيانات خام.
+- كل طلب API هو POST JSON مع `action`؛ عمليات المدير المغيّرة تتطلب هيدر `X-CSRF` (موجود في `api()` بـ admin.js).
+- لا تغيّر بنية الجداول بشكل يكسر قاعدة موجودة على السيرفر (إضافات فقط).
+- لا ترفع `data/*.sqlite` ولا كلمات سر.
+- لازم يضل يشتغل على الموبايل (390px) بدون سكرول أفقي.
+- الفحص السريع: `tests/check.sh`.
+
 ## الحالة (2026-11-04)
 ✅ تم: الموقع، الأصناف، الشات، "הפניות שלי"، الرد التلقائي، لوحة المدير، اختبار e2e ناجح (ديسكتوب + موبايل، بدون أخطاء).
 
