@@ -4,7 +4,7 @@
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 TMP="$(mktemp -d)"; OUT="${1:-$TMP/shots}"; mkdir -p "$OUT"
-rsync -a --exclude .git --exclude tests "$ROOT/" "$TMP/site/"
+mkdir -p "$TMP/site" && cp -r "$ROOT/." "$TMP/site/" && rm -rf "$TMP/site/.git" "$TMP/site/tests"
 rm -f "$TMP"/site/data/*.sqlite*
 sed -i "s/'CHANGE-ME-before-upload',/'test-key-123',/" "$TMP/site/api/config.php"
 php -S 127.0.0.1:8099 -t "$TMP/site" > "$TMP/php.log" 2>&1 &

@@ -18,6 +18,7 @@
 | `api/visitor.php` | `start` / `send` / `thread` / `list` |
 | `api/admin.php` | `state` / `setup` / `login` / `logout` / `stats` / `conversations` / `thread` / `reply` / `status` / `delete` / `settings` / `save_settings` / `password` |
 | `data/` | ملف `hakol.sqlite` (محمي بـ `.htaccess`، مستثنى من git) |
+| `tests/check.sh` | فحص صياغة PHP/JS |
 | `tests/run-e2e.sh` | اختبار شامل بـ Playwright + سيرفر PHP محلي |
 
 ## قرارات تقنية
