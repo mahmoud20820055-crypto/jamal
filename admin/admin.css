@@ -4,6 +4,11 @@ body.adm { background: #eef2f6; min-height: 100vh; }
 .pad { padding: 16px; }
 code { background: var(--bg-alt); padding: 1px 6px; border-radius: 6px; direction: ltr; display: inline-block; }
 
+/* ---------- Boot / diagnostics ---------- */
+.boot { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); z-index: 500; background: #fff; color: var(--muted); padding: 10px 18px; border-radius: 12px; box-shadow: var(--shadow); font-weight: 700; max-width: calc(100% - 32px); direction: ltr; text-align: center; }
+.boot[hidden] { display: none; }
+.boot--err { background: #fee2e2; color: #991b1b; }
+
 /* ---------- Auth ---------- */
 .auth { min-height: 100vh; display: grid; place-items: center; padding: 16px; background: linear-gradient(160deg, var(--navy-2), var(--navy)); }
 .auth[hidden] { display: none; }

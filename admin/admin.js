@@ -7,24 +7,34 @@
   var esc = C.esc, csrf = null;
 
   function api(action, data) {
+    var ctrl = window.AbortController ? new AbortController() : null;
+    var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, 20000) : null;
     return fetch(API, {
-      method: "POST", credentials: "same-origin",
+      method: "POST", credentials: "same-origin", cache: "no-store", signal: ctrl ? ctrl.signal : undefined,
       headers: { "Content-Type": "application/json", "X-CSRF": csrf || "" },
       body: JSON.stringify(Object.assign({ action: action }, data || {}))
     }).then(function (r) {
-      return r.json().catch(function () { return { ok: false, error: "server" }; }).then(function (j) {
+      return r.text().then(function (txt) {
+        var j; try { j = JSON.parse(txt); } catch (x) { j = { ok: false, error: "server", detail: "HTTP " + r.status + ": " + txt.replace(/\s+/g, " ").slice(0, 160) }; }
         if (r.status === 401 && action !== "login") { showAuth(false); }
-        if (!r.ok || !j.ok) { var e = new Error(j.error || "server"); e.code = j.error; throw e; }
+        if (!r.ok || !j.ok) { var e = new Error(j.error || "server"); e.code = j.error; e.detail = j.detail || ("HTTP " + r.status); throw e; }
         return j;
       });
-    });
+    }, function (err) {
+      var e = new Error("network"); e.code = "server";
+      e.detail = err && err.name === "AbortError" ? "timeout (20s)" : "network: " + (err && err.message);
+      throw e;
+    }).finally(function () { if (timer) clearTimeout(timer); });
   }
   var ERR = {
     bad_password: "סיסמה שגויה.", bad_setup_key: "מפתח ההגדרה שגוי (או שלא שונה בקובץ config.php).",
     weak_password: "הסיסמה צריכה להכיל לפחות 8 תווים.", rate_limited: "יותר מדי ניסיונות. נסו שוב בעוד כמה דקות.",
     csrf: "פג תוקף ההתחברות. רעננו את העמוד.", demo_readonly: "בגרסת ההדגמה אי אפשר לשנות סיסמה.", server: "שגיאת שרת. בדקו שהקבצים הועלו לשרת עם PHP."
   };
-  function errText(e) { return ERR[e && e.code] || "אירעה שגיאה (" + ((e && e.code) || "?") + ")"; }
+  function errText(e) {
+    var t = ERR[e && e.code] || "אירעה שגיאה (" + ((e && e.code) || "?") + ")";
+    return (e && e.code === "server" && e.detail) ? t + " [" + e.detail + "]" : t;
+  }
 
   var toastT;
   function toast(t) {
@@ -35,6 +45,7 @@
   /* ================= Auth ================= */
   var setupMode = false;
   function showAuth(setup) {
+    $("#boot").hidden = true;
     setupMode = setup;
     stopPolling();
     $("#app").hidden = true; $("#auth").hidden = false;
@@ -78,6 +89,7 @@
   });
 
   function enterApp() {
+    $("#boot").hidden = true;
     $("#auth").hidden = true; $("#app").hidden = false;
     var h = new Date().getHours();
     $("#hello").textContent = (h < 12 ? "בוקר טוב" : h < 18 ? "צהריים טובים" : "ערב טוב") + " 👋 הנה מה שקורה באתר.";
@@ -279,8 +291,8 @@
   api("state").then(function (s) {
     if (s.logged_in) { csrf = s.csrf; enterApp(); }
     else showAuth(s.needs_setup);
-  }).catch(function () {
+  }).catch(function (e) {
     showAuth(false);
-    $("#authErr").textContent = ERR.server;
+    $("#authErr").textContent = ERR.server + (e && e.detail ? " [" + e.detail + "]" : "");
   });
 })();
