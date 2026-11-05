@@ -97,9 +97,7 @@ p { margin: 0 0 1em; }
 .badge svg { width: 16px; height: 16px; color: var(--accent); }
 .hl { color: var(--navy); background: linear-gradient(transparent 62%, rgba(245, 158, 11, .45) 62%); }
 .lead { font-size: 1.15rem; color: var(--muted); max-width: 36em; }
-.hero__actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 26px 0 30px; }
-.hero__facts { display: flex; gap: 28px; list-style: none; padding: 0; margin: 0; color: var(--muted); }
-.hero__facts b { display: block; color: var(--navy); font-size: 1.5rem; font-weight: 900; }
+.hero__actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 26px 0 0; }
 .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
 .tile {
   aspect-ratio: 1; background: #fff; border-radius: var(--radius); box-shadow: var(--shadow);
