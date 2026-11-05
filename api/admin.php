@@ -67,9 +67,9 @@ switch ($action) {
         $today = strtotime('today');
         $week = strtotime('-6 days', $today);
         $q = fn(string $sql, array $p = []) => (function () use ($pdo, $sql, $p) { $s = $pdo->prepare($sql); $s->execute($p); return (int)$s->fetchColumn(); })();
-        $byCat = $pdo->query('SELECT CASE WHEN category = "" THEN "ללא" ELSE category END AS category, COUNT(*) AS n
+        $byCat = $pdo->query('SELECT CASE WHEN category = \'\' THEN \'ללא\' ELSE category END AS category, COUNT(*) AS n
                               FROM conversations GROUP BY 1 ORDER BY n DESC')->fetchAll();
-        $daysSt = $pdo->prepare('SELECT date(created_at, "unixepoch", "localtime") AS day, COUNT(*) AS n FROM conversations
+        $daysSt = $pdo->prepare('SELECT date(created_at, \'unixepoch\', \'localtime\') AS day, COUNT(*) AS n FROM conversations
                                  WHERE created_at >= ? GROUP BY day');
         $daysSt->execute([$week]);
         $daysMap = array_column($daysSt->fetchAll(), 'n', 'day');
@@ -77,7 +77,7 @@ switch ($action) {
         for ($i = 6; $i >= 0; $i--) { $day = date('Y-m-d', strtotime("-$i days", $today)); $days[] = ['day' => $day, 'n' => (int)($daysMap[$day] ?? 0)]; }
         out(['ok' => true,
             'total' => $q('SELECT COUNT(*) FROM conversations'),
-            'open' => $q('SELECT COUNT(*) FROM conversations WHERE status = "open"'),
+            'open' => $q('SELECT COUNT(*) FROM conversations WHERE status = \'open\''),
             'unread' => $q('SELECT COUNT(*) FROM conversations WHERE unread_admin > 0'),
             'today' => $q('SELECT COUNT(*) FROM conversations WHERE created_at >= ?', [$today]),
             'by_category' => $byCat,
@@ -94,8 +94,8 @@ switch ($action) {
         if (in_array($status, ['open', 'closed'], true)) { $sql .= ' AND status = ?'; $p[] = $status; }
         if ($status === 'unread') $sql .= ' AND unread_admin > 0';
         if ($search !== '') {
-            $sql .= ' AND (name LIKE ? ESCAPE "\\" OR phone LIKE ? ESCAPE "\\" OR business LIKE ? ESCAPE "\\" OR last_msg LIKE ? ESCAPE "\\")';
-            $like = '%' . addcslashes($search, '%_\\') . '%';
+            $sql .= ' AND (name LIKE ? ESCAPE \'!\' OR phone LIKE ? ESCAPE \'!\' OR business LIKE ? ESCAPE \'!\' OR last_msg LIKE ? ESCAPE \'!\')';
+            $like = '%' . str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $search) . '%';
             array_push($p, $like, $like, $like, $like);
         }
         $sql .= ' ORDER BY updated_at DESC LIMIT 300';

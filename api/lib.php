@@ -7,6 +7,13 @@ header('Content-Type: application/json; charset=utf-8');
 header('X-Content-Type-Options: nosniff');
 header('Cache-Control: no-store');
 
+// أي خطأ غير متوقع يرجع JSON واضح بدل صفحة PHP فاضية (التفاصيل بسجل السيرفر)
+set_exception_handler(function (Throwable $e) {
+    error_log('[hakol] ' . $e->getMessage());
+    if (!headers_sent()) http_response_code(500);
+    echo json_encode(['ok' => false, 'error' => 'server'], JSON_UNESCAPED_UNICODE);
+});
+
 function cfg(string $k) { global $CFG; return $CFG[$k] ?? null; }
 
 function db(): PDO {
@@ -26,13 +33,13 @@ function db(): PDO {
             token_hash TEXT NOT NULL UNIQUE,
             name TEXT NOT NULL,
             phone TEXT NOT NULL,
-            business TEXT NOT NULL DEFAULT "",
-            category TEXT NOT NULL DEFAULT "",
-            status TEXT NOT NULL DEFAULT "open",
-            last_msg TEXT NOT NULL DEFAULT "",
+            business TEXT NOT NULL DEFAULT \'\',
+            category TEXT NOT NULL DEFAULT \'\',
+            status TEXT NOT NULL DEFAULT \'open\',
+            last_msg TEXT NOT NULL DEFAULT \'\',
             unread_admin INTEGER NOT NULL DEFAULT 0,
             unread_visitor INTEGER NOT NULL DEFAULT 0,
-            ip TEXT NOT NULL DEFAULT "",
+            ip TEXT NOT NULL DEFAULT \'\',
             created_at INTEGER NOT NULL,
             updated_at INTEGER NOT NULL
         );
@@ -117,7 +124,7 @@ function add_message(int $convId, string $sender, string $body): array {
     $preview = mb_substr(preg_replace('/\s+/u', ' ', $body), 0, 120);
     if ($sender === 'visitor') {
         $pdo->prepare('UPDATE conversations SET last_msg = ?, updated_at = ?, unread_admin = unread_admin + 1,
-                       status = CASE WHEN status = "closed" THEN "open" ELSE status END WHERE id = ?')
+                       status = CASE WHEN status = \'closed\' THEN \'open\' ELSE status END WHERE id = ?')
             ->execute([$preview, $now, $convId]);
     } else {
         $pdo->prepare('UPDATE conversations SET last_msg = ?, updated_at = ?, unread_visitor = unread_visitor + 1 WHERE id = ?')

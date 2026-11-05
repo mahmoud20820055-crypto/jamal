@@ -65,6 +65,7 @@ tests/run-e2e.sh /tmp/shots  # اختبار كامل + صور
 | حقل جديد بالنموذج | `index.html` + `js/main.js` (كائن `d`) + `api/visitor.php` (`start`) + `api/lib.php` (عمود جديد؛ لقاعدة قائمة أضف `ALTER TABLE` آمن) |
 
 **قواعد:**
+- **SQL: نصوص بعلامات مفردة `'...'` فقط.** السيرفر (InfinityFree) شغّال SQLite بدون دعم `"..."` كنص ⇐ `no such column`.
 - كل نص للزوار بالعبري الصحيح، `dir="rtl"`. استعمل خصائص منطقية (`inset-inline`, `margin-inline-start`).
 - أي نص من المستخدم يُعرض عبر `esc()` أو `textContent` فقط – ممنوع `innerHTML` مع بيانات خام.
 - كل طلب API هو POST JSON مع `action`؛ عمليات المدير المغيّرة تتطلب هيدر `X-CSRF` (موجود في `api()` بـ admin.js).
