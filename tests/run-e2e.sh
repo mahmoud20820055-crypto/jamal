@@ -10,4 +10,5 @@ sed -i "s/'CHANGE-ME-before-upload',/'test-key-123',/" "$TMP/site/api/config.php
 php -S 127.0.0.1:8099 -t "$TMP/site" > "$TMP/php.log" 2>&1 &
 PID=$!; trap 'kill $PID 2>/dev/null' EXIT; sleep 1
 node "$ROOT/tests/e2e.js" "$OUT"
+node "$ROOT/tests/cart-e2e.js" "$OUT"
 echo "Screenshots: $OUT"

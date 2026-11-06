@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=10">
+  <link rel="stylesheet" href="css/style.css?v=12">
 </head>
 <body>
 
@@ -32,6 +32,10 @@
         <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wa"/></svg>
         וואטסאפ
       </a>
+      <button class="cart-btn" id="cartBtn" type="button" aria-label="סל הקניות" aria-expanded="false" aria-controls="cart">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-cart"/></svg>
+        <span class="cart-btn__badge" id="cartBadge" hidden>0</span>
+      </button>
       <button class="burger" id="burger" aria-label="פתיחת תפריט" aria-expanded="false" aria-controls="nav">
         <span></span><span></span><span></span>
       </button>
@@ -218,6 +222,69 @@
     </div>
   </div>
 
+  <!-- ===== Cart drawer ===== -->
+  <div class="cart" id="cart" hidden>
+    <div class="cart__backdrop" data-cart-close></div>
+    <aside class="cart__panel" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
+      <header class="cart__head">
+        <button type="button" class="cart__back" id="cartBack" aria-label="חזרה לסל" hidden>→</button>
+        <h2 id="cartTitle">הסל שלי</h2>
+        <button type="button" class="cart__x" data-cart-close aria-label="סגירה">×</button>
+      </header>
+
+      <div class="cart__view" id="cartView">
+        <div class="cart__list" id="cartList"></div>
+        <footer class="cart__foot" id="cartFoot" hidden>
+          <div class="cart__sum"><span>סה״כ משוער <small id="cartItems"></small></span><b id="cartSum">₪0.00</b></div>
+          <p class="cart__fine">המחיר הסופי ומועד האספקה יאושרו בוואטסאפ.</p>
+          <button type="button" class="btn btn--primary btn--block" id="cartNext">המשך להזמנה ←</button>
+          <button type="button" class="cart__clear" id="cartClear">ריקון הסל</button>
+        </footer>
+      </div>
+
+      <form class="cart__form" id="cartForm" novalidate hidden>
+        <div class="form__row">
+          <label>שם מלא *<input name="name" required autocomplete="name"></label>
+          <label>טלפון *<input name="phone" type="tel" required inputmode="tel" pattern="[0-9+\-\s]{9,20}" autocomplete="tel"></label>
+        </div>
+        <label>שם העסק<input name="business" autocomplete="organization"></label>
+        <fieldset class="seg">
+          <legend>קבלת ההזמנה</legend>
+          <label><input type="radio" name="delivery" value="pickup" checked> איסוף עצמי מהחנות</label>
+          <label><input type="radio" name="delivery" value="delivery"> משלוח</label>
+        </fieldset>
+        <div class="form__row">
+          <label>יישוב *<input name="city" required autocomplete="address-level2"></label>
+          <label><span>כתובת <span id="addrReq" hidden>*</span></span><input name="address" autocomplete="street-address" placeholder="רחוב ומספר"></label>
+        </div>
+        <input type="hidden" name="location">
+        <button type="button" class="cart__geo" id="cartGeo">📍 שיתוף המיקום שלי</button>
+        <small class="cart__geotxt" id="cartGeoTxt" aria-live="polite"></small>
+        <label>הערות<textarea name="notes" rows="3" placeholder="שעות נוחות, הנחיות למשלוח, שאלות…"></textarea></label>
+        <p class="chat__err" id="cartErr" role="alert"></p>
+        <button type="submit" class="btn btn--wa btn--block">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wa"/></svg> שליחת ההזמנה בוואטסאפ
+        </button>
+        <p class="cart__fine">ההזמנה תישלח כהודעת וואטסאפ עם קבלה מלאה, ונחזור אליכם לאישור.</p>
+      </form>
+
+      <div class="cart__done" id="cartDone" hidden>
+        <div class="cart__ok">✓</div>
+        <p id="cartDoneMsg"></p>
+        <div class="receipt" id="receipt"></div>
+        <a class="btn btn--wa btn--block" id="cartWa" href="#" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wa"/></svg> שליחה שוב בוואטסאפ
+        </a>
+        <div class="cart__actions">
+          <button type="button" class="btn btn--ghost btn--sm" id="cartPrint">הדפסה / שמירה כ-PDF</button>
+          <button type="button" class="btn btn--ghost btn--sm" id="cartCopy">העתקת ההזמנה</button>
+        </div>
+        <button type="button" class="cart__clear" id="cartNew">חזרה לאתר</button>
+      </div>
+    </aside>
+  </div>
+  <div class="cart-toast" id="cartToast" role="status" hidden></div>
+
   <!-- ===== Chat widget ===== -->
   <button class="chat-fab" id="chatFab" aria-label="צ׳אט עם הכל להכל" aria-expanded="false" aria-controls="chat">
     <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chat"/></svg>
@@ -265,6 +332,7 @@
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
     <defs>
       <symbol id="i-wa" viewBox="0 0 24 24"><path fill="currentColor" d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.2h.01c5.46 0 9.91-4.45 9.91-9.91A9.9 9.9 0 0 0 12.04 2Zm0 18.15h-.01a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.23 8.23 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24a8.24 8.24 0 0 1 8.24 8.25c0 4.54-3.7 8.23-8.24 8.23Zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.5.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.16.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28Z"/></symbol>
+      <symbol id="i-cart" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.7 12.4a1 1 0 0 0 1 .8h9.6a1 1 0 0 0 1-.8L21 7H6"/></g></symbol>
       <symbol id="i-pin" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></g></symbol>
       <symbol id="i-phone" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92Z"/></symbol>
       <symbol id="i-mail" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></g></symbol>
@@ -275,12 +343,13 @@
     </defs>
   </svg>
 
-  <script src="js/config.js?v=10"></script>
-  <script src="js/demo.js?v=10"></script>
-  <script src="js/hl-core.js?v=10"></script>
-  <script src="js/products.js?v=10"></script>
-  <script src="js/main.js?v=10"></script>
+  <script src="js/config.js?v=12"></script>
+  <script src="js/demo.js?v=12"></script>
+  <script src="js/hl-core.js?v=12"></script>
+  <script src="js/products.js?v=12"></script>
+  <script src="js/main.js?v=12"></script>
   <script src="js/vendor/motion-11.18.2.min.js"></script>
-  <script src="js/anim.js?v=10"></script>
+  <script src="js/cart.js?v=12"></script>
+  <script src="js/anim.js?v=12"></script>
 </body>
 </html>

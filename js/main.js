@@ -62,14 +62,19 @@
         "<h3>" + esc(p.name) + "</h3>" +
         (p.desc ? "<p>" + esc(p.desc) + "</p>" : "") +
         (p.features && p.features.length ? '<ul class="prod__feat">' + p.features.map(function (f) { return "<li>" + esc(f) + "</li>"; }).join("") + "</ul>" : "") +
-        '<div class="prod__vars">' + p.variants.map(function (v) {
+        '<div class="prod__vars">' + p.variants.map(function (v, vi) {
+          var label = p.name + (v.name ? " – " + v.name : "");
           return '<div class="var"><div class="var__txt">' + (v.name ? "<b>" + esc(v.name) + "</b>" : "") + "<small>" + esc(v.size) + "</small></div>" +
-            (v.price != null ? '<span class="var__price"><small>' + esc(p.priceLabel || "מחיר") + "</small>" + price(v.price) + "</span>" : "") + "</div>";
+            (v.price != null ? '<span class="var__price"><small>' + esc(p.priceLabel || "מחיר") + "</small>" + price(v.price) + "</span>" : "") +
+            '<button type="button" class="var__add" data-add="' + esc(p.id) + '" data-vi="' + vi + '" aria-label="' + esc("הוספה לסל: " + label) + '">' +
+              '<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-cart"/></svg><span>לסל</span></button>' +
+            "</div>";
         }).join("") + "</div>" +
-        '<a class="btn btn--wa btn--sm btn--block" target="_blank" rel="noopener" href="' + waLink(productMsg(p)) + '">' +
-          '<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wa"/></svg> הזמנה בוואטסאפ</a>' +
+        '<a class="prod__ask" target="_blank" rel="noopener" href="' + waLink(productMsg(p)) + '">' +
+          '<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wa"/></svg> שאלה על המוצר בוואטסאפ</a>' +
       "</div></article>";
   }
+  window.HL = { icon: icon, esc: esc, waLink: waLink, price: price, catById: catById };
   var prodSec = $("#products");
   if (P.length) {
     $("#prodGrid").innerHTML = P.map(productCard).join("");
