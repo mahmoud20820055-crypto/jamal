@@ -32,7 +32,7 @@ window.PRODUCTS = [
     sub: "קופסאות טייק אוויי",
     name: "קרטון להמבורגר כפול",
     features: ["קרטון עבה מאוד", "מתאים להמבורגר + צ׳יפס"],
-    img: "",
+    img: "img/products/burger-box-double.webp",
     priceLabel: "מחיר רגיל",
     variants: [
       { name: "", size: "14×22 ס״מ · גובה 7 ס״מ", price: 0.65 }
@@ -44,7 +44,7 @@ window.PRODUCTS = [
     sub: "קופסאות טייק אוויי",
     name: "קרטונית לצ׳יפס",
     features: ["קרטון קראפט", "פתח נוח להגשה"],
-    img: "",
+    img: "img/products/fries-box.webp",
     variants: [
       { name: "", size: "גובה 13 ס״מ · רוחב 8 ס״מ", price: 0.25 }
     ]
@@ -55,7 +55,7 @@ window.PRODUCTS = [
     sub: "קופסאות טייק אוויי",
     name: "קונוס לצ׳יפס עם כיס לרטבים",
     features: ["כיס מובנה לרוטב", "קרטון קראפט"],
-    img: "",
+    img: "img/products/fries-cone-sauce.webp",
     variants: [
       { name: "", size: "גובה 22 ס״מ", price: 0.25 }
     ]
