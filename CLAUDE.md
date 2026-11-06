@@ -42,6 +42,17 @@
 - **السيرفر الحالي (معاينة مجانية):** InfinityFree، حساب `if0_43354886`، الدومين **http://hakol-lehakol.kesug.com** (المجلد `/htdocs/`).
   الـ Secrets مضافة؛ أي push على `main` بينرفع تلقائياً.
 
+## نظام التصميم (من بيانات UI UX Pro Max – بدون تشغيل سكربتاتها)
+- **النمط:** Hero-Centric + Feature-Rich Showcase + **Bento Grid** للأصناف (أول صنف `cat--feat` كبير 2×2، والبقية بأحجام مختلفة، `grid-auto-flow: dense`).
+- **الألوان:** navy احترافي (`--navy`, `--navy-2`) + برتقالي/عنبري (`--accent`) – توافق توصيات "B2B Service" و"Industrial + safety orange". نص الأزرار البرتقالية غامق (تباين ≥ 4.5:1).
+- **الخط:** Heebo (عبري حديث). البديل الموصى به: Noto Sans Hebrew.
+- **الهيرو:** داكن مع شبكة خفيفة وتوهج، pill "חדש" ← #products، وكروت منتجات حقيقية (`#heroArt`، أول 4 منتجات فيها `img` من products.js).
+- **الحركة:** مكتبة **Motion** (نسخة vanilla محلية: `js/vendor/motion-11.18.2.min.js`, MIT) + `js/anim.js`:
+  دخول الهيرو بـ stagger، parallax خفيف للكروت مع السكرول، ظهور الأقسام والكروت عند الوصول لها (`inView` + `stagger`).
+  `prefers-reduced-motion` = بدون حركة. لو المكتبة ما حمّلت، كل شي بيضل ظاهر (الإخفاء المبدئي بس تحت `.js-motion`).
+  بعد كل حركة `settle()` بيمسح الـ transform عشان `:hover` بالـ CSS يضل شغال.
+- لم نستخدم Next.js/React: الموقع ثابت + PHP عشان الاستضافة والشات ولوحة المدير.
+
 ## تشغيل محلي
 ```bash
 php -S 127.0.0.1:8099        # من جذر الريبو، ثم افتح http://127.0.0.1:8099/  و /admin/

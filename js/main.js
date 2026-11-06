@@ -81,17 +81,31 @@
   /* ---------- Categories ---------- */
   $("#cats").innerHTML = S.categories.map(function (c, i) {
     var n = productsOf(c.id).length;
-    return '<button class="cat" data-cat="' + i + '" style="--d:' + (i * 40) + 'ms">' +
+    return '<button class="cat' + (i === 0 ? " cat--feat" : "") + '" data-cat="' + i + '">' +
       '<span class="cat__icon">' + icon(c.icon) + "</span>" +
       '<span class="cat__title">' + esc(c.title) + "</span>" +
       '<span class="cat__desc">' + esc(c.desc) + "</span>" +
+      (i === 0 ? '<span class="cat__subs">' + c.sub.slice(0, 9).map(function (s) { return "<i>" + esc(s) + "</i>"; }).join("") + "</span>" : "") +
       '<span class="cat__more">' + (n ? n + " מוצרים · " : "") + c.sub.length + " תתי קטגוריות ←</span>" +
       "</button>";
   }).join("");
 
-  $("#heroTiles").innerHTML = S.categories.slice(0, 9).map(function (c, i) {
-    return '<div class="tile" style="--d:' + (i * 90) + 'ms">' + icon(c.icon) + "<span>" + esc(c.title) + "</span></div>";
-  }).join("");
+  /* Hero visual: real product photos as floating cards + category chips */
+  (function () {
+    var art = $("#heroArt"); if (!art) return;
+    var pics = P.filter(function (p) { return p.img; }).slice(0, 4);
+    var html = pics.map(function (p, i) {
+      var v = p.variants[0] || {};
+      return '<figure class="float float--' + i + '" data-depth="' + [0.6, 1, 0.8, 1.2][i] + '">' +
+        '<img src="' + esc(p.img) + '" alt="" width="300" height="300">' +
+        '<figcaption><b>' + esc(p.name.split("–")[0].trim()) + "</b>" + (v.price != null ? "<span>" + price(v.price) + "</span>" : "") + "</figcaption></figure>";
+    }).join("");
+    html += '<div class="hero__chips">' + S.categories.slice(0, 6).map(function (c) {
+      return '<span class="hchip">' + icon(c.icon) + esc(c.title) + "</span>";
+    }).join("") + "</div>";
+    art.innerHTML = html;
+    if (!pics.length) art.classList.add("hero__art--chips");
+  })();
 
   $("#footerCats").innerHTML = S.categories.map(function (c, i) {
     return '<a href="#categories" data-cat="' + i + '">' + esc(c.title) + "</a>";

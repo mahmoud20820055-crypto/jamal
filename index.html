@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=6">
+  <link rel="stylesheet" href="css/style.css?v=9">
 </head>
 <body>
 
@@ -40,23 +40,31 @@
 
   <main>
     <!-- ===== Hero ===== -->
-    <section class="hero">
+    <section class="hero" id="hero">
+      <div class="hero__bg" aria-hidden="true">
+        <span class="hero__grid"></span>
+        <span class="hero__glow hero__glow--a"></span>
+        <span class="hero__glow hero__glow--b"></span>
+      </div>
       <div class="container hero__inner">
         <div class="hero__text">
-          <span class="badge"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-pin"/></svg> ברטעה</span>
-          <h1>כל מה שהעסק שלך צריך – <span class="hl">במקום אחד</span></h1>
+          <a class="hero__pill" href="#products">
+            <span class="hero__pill-tag">חדש</span>
+            קטלוג מוצרים עם מחירים
+            <span aria-hidden="true">←</span>
+          </a>
+          <h1>כל מה שהעסק שלך צריך <span class="hl">במקום אחד</span></h1>
           <p class="lead">ריהוט משרדי, מדפים, מיכון וציוד מקצועי למסעדות, קיוסקים, סופרים ואטליזים, וכל מוצרי החד פעמי – בפלסטיק, קרטון ונייר.</p>
           <div class="hero__actions">
-            <a class="btn btn--primary" href="#categories">לכל הקטגוריות</a>
-            <a class="btn btn--wa" data-wa href="#" target="_blank" rel="noopener">
+            <a class="btn btn--primary btn--lg" href="#categories">לכל הקטגוריות</a>
+            <a class="btn btn--glass btn--lg" data-wa href="#" target="_blank" rel="noopener">
               <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wa"/></svg>
               הזמנה בוואטסאפ
             </a>
           </div>
+          <p class="hero__loc"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-pin"/></svg> <span data-address></span></p>
         </div>
-        <div class="hero__art" aria-hidden="true">
-          <div class="tiles" id="heroTiles"></div>
-        </div>
+        <div class="hero__art" id="heroArt" aria-hidden="true"></div>
       </div>
     </section>
 
@@ -267,10 +275,12 @@
     </defs>
   </svg>
 
-  <script src="js/config.js?v=6"></script>
-  <script src="js/demo.js?v=6"></script>
-  <script src="js/chat.js?v=6"></script>
-  <script src="js/products.js?v=6"></script>
-  <script src="js/main.js?v=6"></script>
+  <script src="js/config.js?v=9"></script>
+  <script src="js/demo.js?v=9"></script>
+  <script src="js/chat.js?v=9"></script>
+  <script src="js/products.js?v=9"></script>
+  <script src="js/main.js?v=9"></script>
+  <script src="js/vendor/motion-11.18.2.min.js"></script>
+  <script src="js/anim.js?v=9"></script>
 </body>
 </html>
