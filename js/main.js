@@ -39,13 +39,53 @@
     return "<li><span>" + esc(h[0]) + "</span><b>" + esc(h[1]) + "</b></li>";
   }).join("");
 
+  /* ---------- Products ---------- */
+  var P = window.PRODUCTS || [];
+  function catById(id) { for (var i = 0; i < S.categories.length; i++) if (S.categories[i].id === id) return S.categories[i]; return null; }
+  function productsOf(catId, sub) {
+    return P.filter(function (p) { return p.category === catId && (!sub || p.sub === sub); });
+  }
+  function price(n) { return (n == null || n === "") ? "" : "₪" + Number(n).toFixed(2); }
+  function productMsg(p) {
+    return "שלום, אשמח להזמין / לקבל הצעת מחיר:\n" + p.name +
+      p.variants.map(function (v) { return "\n• " + (v.name ? v.name + " – " : "") + v.size + " – כמות: "; }).join("");
+  }
+  function productCard(p) {
+    var c = catById(p.category) || {};
+    var media = p.img
+      ? '<img src="' + esc(p.img) + '" alt="' + esc(p.name) + '" loading="lazy" width="450" height="450">'
+      : '<span class="prod__ph">' + icon(c.icon) + "</span>";
+    return '<article class="prod">' +
+      '<div class="prod__img">' + media + "</div>" +
+      '<div class="prod__body">' +
+        '<span class="prod__sub">' + esc(p.sub) + "</span>" +
+        "<h3>" + esc(p.name) + "</h3>" +
+        (p.desc ? "<p>" + esc(p.desc) + "</p>" : "") +
+        (p.features && p.features.length ? '<ul class="prod__feat">' + p.features.map(function (f) { return "<li>" + esc(f) + "</li>"; }).join("") + "</ul>" : "") +
+        '<div class="prod__vars">' + p.variants.map(function (v) {
+          return '<div class="var"><div class="var__txt">' + (v.name ? "<b>" + esc(v.name) + "</b>" : "") + "<small>" + esc(v.size) + "</small></div>" +
+            (v.price != null ? '<span class="var__price"><small>' + esc(p.priceLabel || "מחיר") + "</small>" + price(v.price) + "</span>" : "") + "</div>";
+        }).join("") + "</div>" +
+        '<a class="btn btn--wa btn--sm btn--block" target="_blank" rel="noopener" href="' + waLink(productMsg(p)) + '">' +
+          '<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wa"/></svg> הזמנה בוואטסאפ</a>' +
+      "</div></article>";
+  }
+  var prodSec = $("#products");
+  if (P.length) {
+    $("#prodGrid").innerHTML = P.map(productCard).join("");
+  } else if (prodSec) {
+    prodSec.hidden = true;
+    var nl = $('.nav a[href="#products"]'); if (nl) nl.hidden = true;
+  }
+
   /* ---------- Categories ---------- */
   $("#cats").innerHTML = S.categories.map(function (c, i) {
+    var n = productsOf(c.id).length;
     return '<button class="cat" data-cat="' + i + '" style="--d:' + (i * 40) + 'ms">' +
       '<span class="cat__icon">' + icon(c.icon) + "</span>" +
       '<span class="cat__title">' + esc(c.title) + "</span>" +
       '<span class="cat__desc">' + esc(c.desc) + "</span>" +
-      '<span class="cat__more">' + c.sub.length + " תתי קטגוריות ←</span>" +
+      '<span class="cat__more">' + (n ? n + " מוצרים · " : "") + c.sub.length + " תתי קטגוריות ←</span>" +
       "</button>";
   }).join("");
 
@@ -72,14 +112,30 @@
     $("#modalIcon").innerHTML = icon(c.icon);
     $("#modalTitle").textContent = c.title;
     $("#modalDesc").textContent = c.desc;
-    $("#modalSubs").innerHTML = c.sub.map(function (s) {
-      return '<li><a target="_blank" rel="noopener" href="' + waLink("שלום, אשמח לקבל פרטים והצעת מחיר על: " + c.title + " – " + s) + '">' + esc(s) + "</a></li>";
-    }).join("");
+    renderModal(c, "");
     $("#modalWa").href = waLink("שלום, אשמח לקבל פרטים על " + c.title + ".");
     modal.hidden = false;
     document.body.classList.add("no-scroll");
     $(".modal__x").focus();
   }
+  function renderModal(c, sub) {
+    var all = productsOf(c.id), list = productsOf(c.id, sub);
+    var box = $(".modal__box");
+    box.classList.toggle("modal__box--wide", all.length > 0);
+    $("#modalSubs").innerHTML = (all.length ? '<li><button type="button" class="' + (!sub ? "is-active" : "") + '" data-sub="">הכל (' + all.length + ")</button></li>" : "") +
+      c.sub.map(function (s) {
+        var n = productsOf(c.id, s).length;
+        if (n) return '<li><button type="button" class="' + (sub === s ? "is-active" : "") + '" data-sub="' + esc(s) + '">' + esc(s) + " <i>" + n + "</i></button></li>";
+        return '<li><a target="_blank" rel="noopener" href="' + waLink("שלום, אשמח לקבל פרטים והצעת מחיר על: " + c.title + " – " + s) + '">' + esc(s) + "</a></li>";
+      }).join("");
+    var mp = $("#modalProducts");
+    mp.hidden = !all.length;
+    mp.innerHTML = list.map(productCard).join("");
+  }
+  $("#modalSubs").addEventListener("click", function (e) {
+    var b = e.target.closest("button[data-sub]"); if (!b || !current) return;
+    renderModal(current, b.dataset.sub);
+  });
   function closeModal() {
     modal.hidden = true;
     document.body.classList.remove("no-scroll");

@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=3">
+  <link rel="stylesheet" href="css/style.css?v=4">
 </head>
 <body>
 
@@ -22,6 +22,7 @@
       </a>
       <nav class="nav" id="nav" aria-label="ניווט ראשי">
         <a href="#categories">קטגוריות</a>
+        <a href="#products">מוצרים</a>
         <a href="#why">למה אנחנו</a>
         <a href="#about">אודות</a>
         <a href="#contact">צור קשר</a>
@@ -72,7 +73,19 @@
     </section>
 
     <!-- ===== Why ===== -->
-    <section class="section section--alt" id="why">
+    <!-- ===== Products ===== -->
+    <section class="section section--alt" id="products">
+      <div class="container">
+        <div class="section__head">
+          <span class="eyebrow">המוצרים שלנו</span>
+          <h2>מוצרים ומחירים</h2>
+          <p>בחרו מוצר ושלחו הזמנה או בקשה להצעת מחיר ישירות בוואטסאפ.</p>
+        </div>
+        <div class="prods" id="prodGrid"></div>
+      </div>
+    </section>
+
+    <section class="section" id="why">
       <div class="container">
         <div class="section__head">
           <span class="eyebrow">למה הכל להכל?</span>
@@ -104,7 +117,7 @@
     </section>
 
     <!-- ===== About ===== -->
-    <section class="section" id="about">
+    <section class="section section--alt" id="about">
       <div class="container about">
         <div class="about__text">
           <span class="eyebrow">אודות</span>
@@ -187,6 +200,7 @@
       <h3 id="modalTitle"></h3>
       <p id="modalDesc"></p>
       <ul class="chips" id="modalSubs"></ul>
+      <div class="prods prods--modal" id="modalProducts" hidden></div>
       <div class="modal__actions">
         <a class="btn btn--wa" id="modalWa" href="#" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wa"/></svg> שאלה בוואטסאפ
@@ -253,9 +267,10 @@
     </defs>
   </svg>
 
-  <script src="js/config.js?v=3"></script>
-  <script src="js/demo.js?v=3"></script>
-  <script src="js/chat.js?v=3"></script>
-  <script src="js/main.js?v=3"></script>
+  <script src="js/config.js?v=4"></script>
+  <script src="js/demo.js?v=4"></script>
+  <script src="js/chat.js?v=4"></script>
+  <script src="js/products.js?v=4"></script>
+  <script src="js/main.js?v=4"></script>
 </body>
 </html>
