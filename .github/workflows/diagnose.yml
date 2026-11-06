@@ -1,0 +1,31 @@
+# فحص الموقع الحي من متصفح حقيقي (يدوي فقط) – قراءة فقط، ما بيغيّر إشي بالموقع
+name: Diagnose live site
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: "Site URL"
+        required: false
+        default: "http://hakol-lehakol.kesug.com"
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Playwright
+        run: |
+          npm init -y >/dev/null
+          npm install playwright@1.48.2 >/dev/null
+          npx playwright install --with-deps chromium >/dev/null
+      - name: Run
+        env:
+          SITE_URL: ${{ inputs.url }}
+        run: node tests/diagnose-live.js
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: diagnose-screenshot
+          path: diagnose-admin.png
+          if-no-files-found: ignore
