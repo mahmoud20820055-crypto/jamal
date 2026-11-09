@@ -1,0 +1,10 @@
+# Site disabled: every request gets the "unavailable" page (503)
+Options -Indexes
+DirectoryIndex index.html
+ErrorDocument 503 /index.html
+RewriteEngine On
+RewriteCond %{REQUEST_URI} !^/index\.html$
+RewriteRule ^ - [R=503,L]
+<FilesMatch "\.(sqlite|sqlite-wal|sqlite-shm|php)$">
+  Require all denied
+</FilesMatch>

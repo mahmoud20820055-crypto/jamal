@@ -45,6 +45,11 @@ jobs:
           SETUP_KEY: ${{ secrets.SETUP_KEY }}
         run: |
           mkdir -p build
+          if [ -f MAINTENANCE ]; then
+            echo "::warning::MAINTENANCE file present – deploying the 'site unavailable' page only (all site files are removed from the server)."
+            cp -r maintenance/. build/
+            exit 0
+          fi
           cp -r index.html my.html admin api css js img data build/
           rm -f build/data/*.sqlite* build/img/preview-*.png
           php -r '
